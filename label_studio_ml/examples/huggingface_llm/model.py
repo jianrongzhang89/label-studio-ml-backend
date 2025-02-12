@@ -28,7 +28,9 @@ class HuggingFaceLLM(LabelStudioMLBase):
                 ModelResponse(predictions=predictions) with
                 predictions: [Predictions array in JSON format](https://labelstud.io/guide/export.html#Label-Studio-JSON-format-of-annotated-tasks)
         """
+
         from_name, to_name, value = self.label_interface.get_first_tag_occurence('TextArea', 'Text')
+        print("input", from_name, to_name, value)
         predictions = []
         for task in tasks:
             text = self.preload_task_data(task, task['data'][value])
@@ -48,4 +50,5 @@ class HuggingFaceLLM(LabelStudioMLBase):
                 'model_version': self.get('model_version')
             })
         
+        print("predictions", predictions)
         return ModelResponse(predictions=predictions, model_version=self.get("model_version"))
