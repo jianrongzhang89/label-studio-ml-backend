@@ -142,7 +142,10 @@ class HuggingFaceNER(LabelStudioMLBase):
         if event not in ('ANNOTATION_CREATED', 'ANNOTATION_UPDATED', 'START_TRAINING'):
             logger.info(f"Skip training: event {event} is not supported")
             return
-
+        print("Calling mdoel fit with data:", data)
+        print("annotation:", data['annotation'])
+        print("project:", data['annotation']['project'])
+    
         project_id = data['annotation']['project']
         tasks = self._get_tasks(project_id)
 

@@ -44,5 +44,9 @@ RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=locked \
 COPY . .
 
 EXPOSE 9090
+RUN chmod 777 /usr/local/lib/python3.11/site-packages/label_studio_ml
+RUN chmod 777 /app
+
+USER 1001
 
 CMD gunicorn --preload --bind :$PORT --workers $WORKERS --threads $THREADS --timeout 0 _wsgi:app
