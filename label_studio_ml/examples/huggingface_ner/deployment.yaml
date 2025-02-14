@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: List
+items:
+  - kind: Deployment
+    apiVersion: apps/v1
+    metadata:
+      name: huggingface-ner-label-studio-ml
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          name: huggingface-ner-label-studio-ml
+      template:
+        metadata:
+          labels:
+            name: huggingface-ner-label-studio-ml
+        spec:
+          securityContext:
+            seccompProfile: 
+              type: RuntimeDefault 
+            runAsNonRoot: true
+          containers:
+            - name: huggingface-ner-label-studio-ml
+              image: quay.io/jianrzha/huggingface-ner-ml-backend:0.0.3
+              imagePullPolicy: Always
+              env:
+                - name: MODEL_DIR
+                  value: /data/models
+                - name: MODEL_NAME
+                  value: dslim/bert-base-NER
+                - name: TRANSFORMERS_CACHE
+                  value: /app
+                - name: LABEL_STUDIO_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: huggingface-ner-label-studio-secret
+                      key: token
+              ports:
+                - containerPort: 9090
+                  protocol: TCP
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+              volumeMounts:
+                - name: data-server
+                  mountPath: /data
+                - name: data-cache
+                  mountPath: /root/.cache
+          volumes:
+            - name: data-server
+              emptyDir: {}
+            - name: data-cache
+              emptyDir: {}
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: huggingface-ner-label-studio-ml
+      labels:
+        name: huggingface-ner-label-studio-ml
+    spec:
+      ports:
+        - port: 9090
+          protocol: TCP
+          targetPort: 9090
+      selector:
+        name: huggingface-ner-label-studio-ml
+  - kind: Route
+    apiVersion: route.openshift.io/v1
+    metadata:
+      name: huggingface-ner-label-studio-ml
+      labels:
+        name: huggingface-ner-label-studio-ml
+    spec:
+      port:
+        targetPort: 9090
+      to:
+        kind: Service
+        name: huggingface-ner-label-studio-ml
