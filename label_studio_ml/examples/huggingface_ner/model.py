@@ -42,11 +42,11 @@ class HuggingFaceNER(LabelStudioMLBase):
     """
     LABEL_STUDIO_HOST = os.getenv('LABEL_STUDIO_HOST', 'http://localhost:8080')
     LABEL_STUDIO_API_KEY = os.getenv('LABEL_STUDIO_API_KEY')
-    START_TRAINING_EACH_N_UPDATES = int(os.getenv('START_TRAINING_EACH_N_UPDATES', 10))
+    START_TRAINING_EACH_N_UPDATES = int(os.getenv('START_TRAINING_EACH_N_UPDATES', 2))
     LEARNING_RATE = float(os.getenv('LEARNING_RATE', 1e-3))
     NUM_TRAIN_EPOCHS = int(os.getenv('NUM_TRAIN_EPOCHS', 10))
     WEIGHT_DECAY = float(os.getenv('WEIGHT_DECAY', 0.01))
-
+    logger.setLevel("DEBUG")
     def get_labels(self):
         li = self.label_interface
         from_name, _, _ = li.get_first_tag_occurence('Labels', 'Text')
@@ -102,7 +102,7 @@ class HuggingFaceNER(LabelStudioMLBase):
                     'score': avg_score / len(results),
                     'model_version': self.get('model_version')
                 })
-        
+        print("Predictions:", predictions)
         return ModelResponse(predictions=predictions, model_version=self.get('model_version'))
 
     def _get_tasks(self, project_id):
@@ -143,12 +143,15 @@ class HuggingFaceNER(LabelStudioMLBase):
             logger.info(f"Skip training: event {event} is not supported")
             return
         print("Calling mdoel fit with data:", data)
-        print("annotation:", data['annotation'])
-        print("project:", data['annotation']['project'])
-    
-        project_id = data['annotation']['project']
+        if 'annotation' not in data:
+            print("annotation is not in data, return")
+            return
+        #print("project:", data['project']['project'])
+        project_id = data['project']['id']
+        print("project_id:", project_id)
+        #project_id = data['annotation']['project']
         tasks = self._get_tasks(project_id)
-
+        print("event, START_TRAINING_EACH_N_UPDATES, tasks:", event, self.START_TRAINING_EACH_N_UPDATES, tasks)
         if len(tasks) % self.START_TRAINING_EACH_N_UPDATES != 0 and event != 'START_TRAINING':
             logger.info(f"Skip training: {len(tasks)} tasks are not multiple of {self.START_TRAINING_EACH_N_UPDATES}")
             return
@@ -161,7 +164,7 @@ class HuggingFaceNER(LabelStudioMLBase):
         # }
         ds_raw = []
         from_name, to_name, value = self.label_interface.get_first_tag_occurence('Labels', 'Text')
-        tokenizer = AutoTokenizer.from_pretrained(BASELINE_MODEL_NAME)
+        tokenizer = AutoTokenizer.from_pretrained(BASELINE_MODEL_NAME,  ignore_mismatched_sizes=True)
 
         no_label = 'O'
         label_to_id = {no_label: 0}
@@ -222,7 +225,7 @@ class HuggingFaceNER(LabelStudioMLBase):
 
         model = AutoModelForTokenClassification.from_pretrained(
             BASELINE_MODEL_NAME, num_labels=len(id_to_label),
-            id2label=id_to_label, label2id=label_to_id)
+            id2label=id_to_label, label2id=label_to_id, ignore_mismatched_sizes=True)
         logger.debug(f"Model: {model}")
 
         training_args = TrainingArguments(
