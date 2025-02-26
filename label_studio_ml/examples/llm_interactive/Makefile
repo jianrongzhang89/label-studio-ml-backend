@@ -1,6 +1,6 @@
 SHELL := /bin/bash
-VERSION ?= 0.0.10
-IMAGE_TAG ?= quay.io/jianrzha/huggingface-ner-ml-backend
+VERSION ?= 0.0.1
+IMAGE_TAG ?= quay.io/jianrzha/llm-interactive-ml-backend
 IMG ?= $(IMAGE_TAG):$(VERSION)
 
 all: build push deploy
