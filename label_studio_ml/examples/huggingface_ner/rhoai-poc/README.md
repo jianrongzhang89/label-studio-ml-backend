@@ -1,6 +1,6 @@
 # POC for Jupyter Notebook and Label Studio integration
 
-This readme shows how to use the notebook to set up Label Studio project, import the labelling tasks from the dataset stored in an AWS S3 bucket into the project for labelling, and export the labelled tasks from the Label Studio project and fine tune an Name Entity Recognition (NER) pretrained model. This use case demonstrates how the user can use Label Studio to review and correct the labels in the training dataset in order to improve the training performance.
+This readme shows how to use the notebook to set up Label Studio project, import the labelling tasks from the dataset stored in an AWS S3 bucket into the project for labelling, and export the labelled tasks from the Label Studio project to fine-tune an Name Entity Recognition (NER) pretrained model. This use case demonstrates how the user can use Label Studio to review and correct the labels in the training dataset in order to improve the training performance.
 
 ## Prerequisites
 
@@ -12,10 +12,24 @@ This POC uses `AWS S3` to store the training data before it gets updated by the 
 
 ## Quickstart
 
-Open up `Red Hat OpenShift AI` by selecting it from OpenShift Application Launcher. This will open up Red Hat OpenShift AI in a new tab.
+### Deploy Label Studio on OpenShift Cluster
 
+```
+oc new-project labelstudio-poc
+oc -f labelstudio.yaml -n labelstudio-poc
+```
+
+Find the URL for the Label Studio UI:
+```
+oc get route labelstudio -o jsonpath='{"http://"}{.spec.host}{"\n"}'
+```
+
+Open a web browser and use this URL to open the Label Studio UI. Create a user account if this is the first time you open the UI.
+
+After login, you can click the user icon and go to `Account and Settings` to generate an acccess token which will be used later for the Jupyter Notebook to access Label Studio via API calls.
 
 ### Create Data Science project
+Open up `Red Hat OpenShift AI` by selecting it from OpenShift Application Launcher. This will open up Red Hat OpenShift AI in a new tab.
 Select Data Science Projects in the left navigation menu.
 
 Create a new Data Science project by clicking on `Create data science project` button.
@@ -144,9 +158,15 @@ Configuration for the Label Studio project for the NER model:
 
 ### Check model training performance
 
-The notebook displays model training result with the metrics. See the sample notebook outputs below:
-* [notebook_labelstudio-01](./ore-notebooks/notebook_labelstudio_with_output_before.ipynb)
-* [notebook_labelstudio-02](./more-notebooks/notebook_labelstudio_with_output_after.ipynb)
+The notebook displays model training result with the metrics. About 1000 entries in the traing dataset were used. The dataset was generated as follows:
+1) Take a subset of the published training dataset with 1000 entries.
+2) Use the pretrained dslim/bert-base-NER to generate predictions for the texts for this subset. This becomes a base dataset for this POC.
+
+The base dataset is imported to Label Studio for review and labelling. After the Label Studio user has completed the labelling work, run the notebook again with `import_test_data_from_aws=false` and `existing_project_id` set to the ID of the corresonding Label Studio project. User can use Label Studio UI to export the updated dataset. 
+
+See the sample notebook outputs below:
+* [notebook_labelstudio-01](./notebook-output/notebook_labelstudio_with_output_before.ipynb)
+* [notebook_labelstudio-02](./notebook-output/notebook_labelstudio_with_output_after.ipynb)
 
 ## Links
 * [Label Studio Documentation](https://labelstud.io/guide/quick_start)

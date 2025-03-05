@@ -133,7 +133,7 @@ spec:
       volumes:
         - name: labelstudio-data-vol
           persistentVolumeClaim:
-            claimName: labelstudio-data-pvc             
+            claimName: labelstudio-data-pvc
 ---
 apiVersion: v1
 kind: Service

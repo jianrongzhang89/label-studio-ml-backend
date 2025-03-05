@@ -6,10 +6,10 @@ IMG ?= $(IMAGE_TAG):$(VERSION)
 all: build push deploy
 
 install:
-	pip install -r requirements.txt	
+	pip install -r ../requirements.txt	
 
 build:
-	podman build  --platform=linux/amd64 -t ${IMG} .
+	podman build  --platform=linux/amd64 -f ../Dockerfile -t ${IMG} .
 push: ## Push docker image with the manager.
 	podman push ${IMG}
 
