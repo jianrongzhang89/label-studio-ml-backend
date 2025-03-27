@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-VERSION ?= 0.0.10
+VERSION ?= 0.0.16
 IMAGE_TAG ?= quay.io/jianrzha/huggingface-ner-ml-backend
 IMG ?= $(IMAGE_TAG):$(VERSION)
 

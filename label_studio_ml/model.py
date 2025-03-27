@@ -199,7 +199,7 @@ class LabelStudioMLBase(ABC):
         Returns:
             list[dict]: A list of dictionaries containing predictions.                
         """
-
+        print("Calling predict base with function ", _predict_fn)
         # if there is a registered predict function, use it
         if _predict_fn:
             return _predict_fn(tasks, context, helper=self, **kwargs)
@@ -270,14 +270,21 @@ class LabelStudioMLBase(ABC):
         Returns:
             Any: Preloaded task data value.
         """
+        logger.info("preload test data, value"+ value)
+        print("preload test data, value"+ value)
+        return value # test
+    
         # recursively preload dict
         if isinstance(value, dict):
+            logger.info("value isinstance of dict")
+        
             for key, item in value.items():
                 value[key] = self.preload_task_data(task=task, value=item, read_file=read_file)
             return value
 
         # recursively preload list
         elif isinstance(value, list):
+            logger.info("value isinstance of list")
             return [
                 self.preload_task_data(task=task, value=item, read_file=read_file)
                 for item in value
@@ -285,6 +292,7 @@ class LabelStudioMLBase(ABC):
 
         # preload task data if value is URI/URL/local path
         elif isinstance(value, str) and is_preload_needed(value):
+            logger.info("value is URI/URL/local path with value:"+value+" task:"+task)
             filepath = self.get_local_path(url=value, task_id=task.get('id'))
             if not read_file:
                 return filepath

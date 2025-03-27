@@ -68,7 +68,9 @@ class HuggingFaceNER(LabelStudioMLBase):
         """
         li = self.label_interface
         from_name, to_name, value = li.get_first_tag_occurence('Labels', 'Text')
+        print("predict before preload_task_data, task:", tasks)
         texts = [self.preload_task_data(task, task['data'][value]) for task in tasks]
+        print("predict after preload_task_data")
 
         # run predictions
         model_predictions = _model(texts)

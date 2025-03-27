@@ -65,7 +65,7 @@ def _predict():
                         label_config=label_config)
 
     # model.use_label_config(label_config)
-
+    print("api.py, calling model.predict with tasks", tasks)
     response = model.predict(tasks, context=context, **params)
 
     # if there is no model version we will take the default

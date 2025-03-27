@@ -21,7 +21,7 @@ items:
             runAsNonRoot: true
           containers:
             - name: huggingface-ner-label-studio-ml
-              image: quay.io/jianrzha/huggingface-ner-ml-backend:0.0.10
+              image: quay.io/jianrzha/huggingface-ner-ml-backend:0.0.16
               imagePullPolicy: Always
               env:
                 - name: MODEL_DIR
