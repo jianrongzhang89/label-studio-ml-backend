@@ -1,0 +1,26 @@
+apiVersion: serving.kserve.io/v1alpha1
+kind: ServingRuntime
+labels:
+  opendatahub.io/dashboard: "true"
+metadata:
+  name: ner-custom
+  annotations:
+    opendatahub.io/recommended-accelerators: '["nvidia.com/gpu"]'
+    openshift.io/display-name: HuggingFace NER
+spec:
+  supportedModelFormats:
+    - name: kserve-torchserve
+      autoSelect: true
+  multiModel: false
+  containers:
+    - name: kserve-container
+      image: quay.io/jianrzha/ner:0.0.7
+      args:
+        - --model_name
+        - ner
+        - --model_checkpoint
+        - dslim/bert-base-NER
+      env:
+        - name: model_checkpoint
+          value: dslim/bert-base-NER
+
