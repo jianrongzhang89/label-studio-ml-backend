@@ -170,6 +170,10 @@ See the sample notebook outputs below:
 
 You can see that the training loss was reduced from 0.681 to 0.396, and validation loss was reduced from 0.20 to 0.13 after the dataset was labelled by the user via Label Studio.
 
+## Deploy Machine Learning (ML) Backend
+Use the manifest file `deployment.yaml` to deploy the ML Backend in your OpenShift project.
+`oc apply -f deloyment.yaml`
+
 ## Links
 * [Label Studio Documentation](https://labelstud.io/guide/quick_start)
 * [Red Hat OpenShift AI installation](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2.13/html-single/installing_and_uninstalling_openshift_ai_self-managed/index#installing-and-deploying-openshift-ai_install)

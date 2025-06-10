@@ -108,6 +108,10 @@ Below is a gif showing `Open workbench` pages:
 ### Clone repo
 Now that the workbench is created and running, follow these steps to setup the project:
 * In the workbench, click on `Terminal` icon in the `Launcher` tab.
+* Run the `sshkey-gen` command to generate an SSH key pair under ~/.ssh.
+* Set the permissions for the private key:
+  `chmod 400 ~/.ssh/id_rsa`
+* Login to github in a web browser, and in your profile `SSH and GPG keys` section, add your generated SSH public key `~/.ssh/id_rsa.pub` to allow the workbench to access github.
 * Clone this repository in the `Terminal` by running the following command:
   `git clone git@github.com:jianrongzhang89/label-studio-ml-backend.git`
 
@@ -124,7 +128,6 @@ You can load the input training data into Label Studio UI directly for labelling
   * `input_file_dir` = "ner-source"  # Directory where the input data file is stored in AWS S3 bucket
   * `input_file`='traningdata-1000-before.json'
 * Run this notebook by selecting `Run` -> `Run All Cells` menu item
-* _When the notebook successfully runs, your fine-tuned model should have been uploaded to AWS or MinIO in the bucket specified for `AWS_S3_BUCKET` in `Create Workbench` section_.
 
 Note: you can import the training data into Label Studio UI directly for review and labelling. In this case, set `import_test_data_from_aws = False` and `existing_project_id` to the corresponding Label Studio Project ID which can be found in the project URL displayed in the UI.
 
