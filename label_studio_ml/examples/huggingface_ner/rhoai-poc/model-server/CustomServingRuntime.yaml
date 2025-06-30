@@ -9,12 +9,24 @@ metadata:
     openshift.io/display-name: HuggingFace NER
 spec:
   supportedModelFormats:
-    - name: kserve-torchserve
+    - name: pytorch
+      version: "1"
       autoSelect: true
   multiModel: false
+  tolerations:
+    - key: "nvidia.com/gpu"
+      operator: "Equal"
+      value: "true"
+      effect: NoSchedule
+    - key: "odh-notebook"
+      operator: "Equal"
+      value: "true"
+      effect: NoSchedule
+  nodeSelector:
+    nvidia.com/gpu.count: "1"
   containers:
     - name: kserve-container
-      image: quay.io/jianrzha/ner:0.0.7
+      image: quay.io/jianrzha/ner:0.0.8
       args:
         - --model_name
         - ner
