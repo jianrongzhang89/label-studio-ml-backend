@@ -304,3 +304,5 @@ You must ensure that the ML backend can access your Label Studio data. If it can
 
 To remedy this, ensure you have set the `LABEL_STUDIO_URL` and `LABEL_STUDIO_API_KEY` environment variables. For more information, see [Allow the ML backend to access Label Studio data](https://labelstud.io/guide/ml#Allow-the-ML-backend-to-access-Label-Studio-data).
 
+Updated on Nov 16, 2026.
+
